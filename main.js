@@ -117,17 +117,25 @@ function sqrClickHandler(e) {
 }
 function collide() {
     if (sq.y + 100 > floor.y) {
+        isDown = false;
         sq.y = floor.y - 100;
-        if (sq.velY > 0) {
+        if (sq.velY > 0)
             sq.velY = -(sq.velY) * 0.6 + 1;
-        }
     }
-    if (sq.x <= 0 || sq.x >= window.innerWidth - sq.size_x) {
-        sq.velX *= -1;
+    if (sq.x <= 0) {
+        isDown = false;
+        if (sq.velX < 0)
+            sq.velX *= -1;
+    }
+    else if (sq.x >= window.innerWidth - sq.size_x) {
+        isDown = false;
+        if (sq.velX > 0) {
+            sq.velX *= -1;
+        }
     }
 }
 function start() {
-    sq = new Square(100, 100, 100);
+    sq = new Square(100, 100, 100, color = '#ddaa10');
     floor = new Box(0, window.innerHeight - 200, screen.width, 200);
     sq.velX = 10;
     lastUpdate = Date.now();
