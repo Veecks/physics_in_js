@@ -51,7 +51,7 @@ class Square extends Object2D{
         this.velY = 0;
         this.prev_x;
         this.prev_y;
-        this.obj.onclick = sqrClickHandler;
+        this.obj.onmousedown = sqrClickHandler;
     }
 
     get x() { return parseFloat(this.obj.style.left.slice(0, -2)) }
@@ -123,6 +123,14 @@ document.addEventListener('mousemove', (e) => {
         sq.y += e.clientY - clickY;
         clickX = e.clientX;
         clickY = e.clientY;
+    }
+});
+document.addEventListener('touchmove', (e) => {
+    if(isDown) {
+        sq.x += e.touches[0].clientX - clickX;
+        sq.y += e.touches[0].clientY - clickY;
+        clickX = e.touches[0].clientX;
+        clickY = e.touches[0].clientY;
     }
 });
 

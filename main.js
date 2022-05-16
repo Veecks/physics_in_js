@@ -85,7 +85,7 @@ var Square = /** @class */ (function (_super) {
         _this.velY = 0;
         _this.prev_x;
         _this.prev_y;
-        _this.obj.onclick = sqrClickHandler;
+        _this.obj.onmousedown = sqrClickHandler;
         return _this;
     }
     Object.defineProperty(Square.prototype, "x", {
@@ -162,6 +162,14 @@ document.addEventListener('mousemove', function (e) {
         sq.y += e.clientY - clickY;
         clickX = e.clientX;
         clickY = e.clientY;
+    }
+});
+document.addEventListener('touchmove', function (e) {
+    if (isDown) {
+        sq.x += e.touches[0].clientX - clickX;
+        sq.y += e.touches[0].clientY - clickY;
+        clickX = e.touches[0].clientX;
+        clickY = e.touches[0].clientY;
     }
 });
 start();
