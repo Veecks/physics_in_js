@@ -95,7 +95,7 @@ function collide() {
 
 
 function start() {
-    sq = new Square(100, 100, 100, color='#ddaa10');
+    sq = new Square(100, 100, 100, '#ddaa10');
     floor = new Box(0, window.innerHeight - 200, screen.width, 200);
     sq.velX = 10;
     lastUpdate = Date.now();
