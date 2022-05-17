@@ -13,6 +13,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var friction = 2;
+var g = 0.5;
 var sq;
 var floor;
 var lastUpdate;
@@ -27,11 +29,15 @@ var Object2D = /** @class */ (function () {
     function Object2D(x, y, size_x, size_y) {
         this.obj = document.createElement('div');
         this.obj.style.position = 'absolute';
-        this.x = x;
-        this.y = y;
         this.obj.style.width = "".concat(size_x, "px");
         this.obj.style.height = "".concat(size_y, "px");
         document.body.appendChild(this.obj);
+        this.x = x;
+        this.y = y;
+        this.velX = 0;
+        this.velY = 0;
+        this.mass = 100;
+        this.bounce = 0.8;
     }
     Object.defineProperty(Object2D.prototype, "size_x", {
         get: function () { return parseFloat(this.obj.style.width.slice(0, -2)); },
@@ -55,11 +61,14 @@ var Object2D = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
-    Object.defineProperty(Object2D.prototype, "pos", {
-        get: function () { return [this.x, this.y]; },
-        enumerable: false,
-        configurable: true
-    });
+    Object2D.prototype.rigidbody = function () {
+        this.velX -= friction / this.mass * this.velX * deltaTime;
+        this.velY += (g - friction / this.mass * this.velY) * deltaTime;
+        this.x += this.velX * deltaTime;
+        this.y += this.velY * deltaTime;
+    };
+    Object2D.prototype.collider = function () {
+    };
     return Object2D;
 }());
 var Box = /** @class */ (function (_super) {
@@ -81,8 +90,6 @@ var Square = /** @class */ (function (_super) {
         var _this = _super.call(this, x, y, size, size) || this;
         _this.obj.classList.add('square', 'box-collider', 'rigidbody');
         _this.obj.style.background = color;
-        _this.velX = 0;
-        _this.velY = 0;
         _this.prev_x;
         _this.prev_y;
         _this.obj.onmousedown = sqrClickHandler;
@@ -120,40 +127,38 @@ function collide() {
         isDown = false;
         sq.y = floor.y - 100;
         if (sq.velY > 0)
-            sq.velY = -(sq.velY) * 0.6 + 1;
+            sq.velY *= -sq.bounce;
     }
     if (sq.x <= 0) {
         isDown = false;
         if (sq.velX < 0)
-            sq.velX *= -1;
+            sq.velX *= -sq.bounce;
     }
     else if (sq.x >= window.innerWidth - sq.size_x) {
         isDown = false;
         if (sq.velX > 0) {
-            sq.velX *= -1;
+            sq.velX *= -sq.bounce;
         }
     }
 }
 function start() {
     sq = new Square(100, 100, 100, '#ddaa10');
     floor = new Box(0, window.innerHeight - 200, screen.width, 200);
-    sq.velX = 10;
     lastUpdate = Date.now();
     setInterval(tick, 0);
 }
 function update() {
     console.log(deltaTime);
     if (!isDown) {
-        sq.velY += 0.5 * deltaTime;
-        sq.y += sq.velY * deltaTime;
-        sq.x += sq.velX * deltaTime;
-        sq.velX -= 0.007 * sq.velX;
+        sq.rigidbody();
     }
     else {
         sq.velY = 0.15 * (sq.y - sq.prev_y) / deltaTime;
         sq.velX = 0.15 * (sq.x - sq.prev_x) / deltaTime;
     }
     collide();
+    floor.obj.innerText = "VelX = ".concat(sq.velX, "\n");
+    floor.obj.innerText += "VelY = ".concat(sq.velY, "\n");
 }
 // document.addEventListener('click', () => isDown = !isDown);
 document.addEventListener('mousemove', function (e) {
