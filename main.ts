@@ -107,12 +107,12 @@ class Object2D {
                     entity.velY = - Math.abs(entity.velY);
                 }
             }
-            if(colided == false) {
-                if(this.y < entity.y)
-                    this.y = entity.y - this.size_y;
-                if(this.y > entity.y)
-                    entity.y = this.y - entity.size_y;
-            }
+            // if(colided == false) {
+            //     if(this.y + this.size_y - 10 < entity.y)
+            //         this.y = entity.y - this.size_y;
+            //     if(this.y > entity.y + entity.size_y - 10)
+            //         entity.y = this.y - entity.size_y;
+            // }
 
         }else {
             this.obj.style.background = '#ddaa10';
@@ -140,6 +140,7 @@ class Square extends Object2D{
         this.obj.onmousedown = this.onClickHandler.bind(this);
         this.obj.ontouchstart = this.onClickHandler.bind(this);
         document.addEventListener('mousemove', this.mouseDrag.bind(this));
+        document.addEventListener('touchmove', this.touchDrag.bind(this));
         this.obj.onmouseup = () => this.dragging = false;
         this.obj.ontouchend = () => this.dragging = false;
     }
@@ -163,10 +164,12 @@ class Square extends Object2D{
 
     touchDrag(e) {
         e.preventDefault();
-        this.x += e.touches[0].clientX - clickX;
-        this.y += e.touches[0].clientY - clickY;
-        clickX = e.touches[0].clientX;
-        clickY = e.touches[0].clientY;
+        if(this.dragging) {
+            this.x += e.touches[0].clientX - clickX;
+            this.y += e.touches[0].clientY - clickY;
+            clickX = e.touches[0].clientX;
+            clickY = e.touches[0].clientY;
+        }
     }
 
     rigidbody() {
@@ -182,16 +185,16 @@ class Square extends Object2D{
 
 function collide() {
     // floor
-    // if(sq.y + sq.size_y > floor.y) {
-    //     sq.y = floor.y - 100;
-    //     if(sq.velY > 0)
-    //         sq.velY *= -sq.bounce;
-    // }
-    // if(sq2.y + sq2.size_y > floor.y) {
-    //     sq2.y = floor.y - sq2.size_y;
-    //     if(sq2.velY > 0)
-    //         sq2.velY *= -sq2.bounce;
-    // }
+    if(sq.y + sq.size_y > floor.y) {
+        sq.y = floor.y - 100;
+        if(sq.velY > 0)
+            sq.velY *= -sq.bounce;
+    }
+    if(sq2.y + sq2.size_y > floor.y) {
+        sq2.y = floor.y - sq2.size_y;
+        if(sq2.velY > 0)
+            sq2.velY *= -sq2.bounce;
+    }
 
     //walls
     if(sq.x <= 0) {
@@ -219,7 +222,7 @@ function collide() {
 
 function start() {
     sq = new Square(100, 100, 100, '#ddaa10');
-    sq2 = new Square(400, 100, 50, '#ddaa10');
+    sq2 = new Square(250, 100, 50, '#ddaa10');
     floor = new Box(0, window.innerHeight - 200, window.innerWidth, 200);
     lastUpdate = Date.now();
     setInterval(tick, 0);
