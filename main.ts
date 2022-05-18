@@ -195,12 +195,12 @@ function collide() {
 
     //walls
     if(sq.x <= 0) {
+        sq.dragging = false;
         if(sq.velX < 0)
-            sq.dragging = false;
             sq.velX *= -sq.bounce;
     }else if(sq.x >= window.innerWidth - sq.size_x) {
+        sq.dragging = false;
         if(sq.velX > 0) {
-            sq.dragging = false;
             sq.velX *= -sq.bounce;
         }
     }
